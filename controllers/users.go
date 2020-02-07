@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/RudePupp/whopays/views"
+	"github.com/gorilla/schema"
+
+    "github.com/RudePupp/whopays/views"
 )
 
 // NewUsers is used to create a new Users controller.
@@ -31,6 +33,11 @@ func (u *Users) New(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+type SignupForm struct {
+	Email    string `schema:"email"`
+	Password string `schema:"password"`
+}
+
 // Create is used to process the signup form when a user
 // submits it. This is used to create a new user account.
 //
@@ -39,7 +46,11 @@ func (u *Users) Create(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
 		panic(err)
 	}
-	// r.PostForm = map[string][]string
-	fmt.Fprintln(w, r.PostForm["email"])
-	fmt.Fprintln(w, r.PostForm["password"])
+
+	dec := schema.NewDecoder()
+	var form SignupForm
+	if err := dec.Decode(&form, r.PostForm); err != nil {
+		panic(err)
+	}
+	fmt.Fprintln(w, form)
 }
