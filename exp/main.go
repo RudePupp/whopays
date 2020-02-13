@@ -24,26 +24,22 @@ func main() {
 	}
 	defer db.Close()
 
-	type User struct {
-		ID    int
-		Name  string
-		Email string
-	}
-	var users []User
 	rows, err := db.Query(`
-		SELECT id, name, email
-		FROM users`)
+		SELECT *
+		FROM users
+		INNER JOIN orders ON users.id=orders.user_id`)
 	if err != nil {
 		panic(err)
 	}
-	defer rows.Close()
 	for rows.Next() {
-		var user User
-		err = rows.Scan(&user.ID, &user.Name, &user.Email)
-		if err != nil {
+		var userID, orderID, amount int
+		var email, name, desc string
+		if err := rows.Scan(&userID, &name, &email, &orderID, &userID, &amount, &desc); err != nil {
 			panic(err)
 		}
-		users = append(users, user)
+		fmt.Println("userID:", userID, "name:", name, "email:", email, "orderID:", orderID, "amount:", amount, "desc:", desc)
 	}
-	fmt.Println(users)
+	if rows.Err() != nil {
+		panic(rows.Err())
+	}
 }
