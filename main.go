@@ -17,7 +17,7 @@ func main() {
 	r.Handle("/contact", staticC.Contact).Methods("GET")
 	r.HandleFunc("/signup", usersC.New).Methods("GET")
 	r.HandleFunc("/signup", usersC.Create).Methods("POST")
-	http.ListenAndServe(":3000", r)
+	http.ListenAndServe("localhost:3000", r)
 }
 
 func must(err error) {
